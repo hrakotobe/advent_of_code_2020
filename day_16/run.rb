@@ -12,20 +12,22 @@ end
 my_ticket = []
 processor = proc { |line| validator.add_rule(line) }
 File.open('input.txt').each do |raw_line|
-  line = raw_line.strip
-  next if line.empty?
+  current_line = raw_line.strip
+  next if current_line.empty?
 
-  if line == 'your ticket:'
+  if current_line == 'your ticket:'
     processor = proc { |line| my_ticket << parse_ticket(line) }
     next
   end
 
-  if line == 'nearby tickets:'
+  if current_line == 'nearby tickets:'
     processor = proc { |line| validator.valid?(parse_ticket(line)) }
     next
   end
 
-  processor.call(line)
+  processor.call(current_line)
 end
 
-puts validator.scanning_error_rate
+validator.process_field_order
+mapped_ticket = validator.map_ticket(my_ticket.flatten)
+puts mapped_ticket.keys.select { |key| key.match?(/^departure/) }.reduce(1) { |sum, key| sum * mapped_ticket[key] }
