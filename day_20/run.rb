@@ -22,5 +22,6 @@ mapper.read_tile(block) # last block
 mapper.bind_tiles
 
 corner_tiles = mapper.tiles.select { |_id, t| t[:neighbors].count == 2 }
-
 puts corner_tiles.keys.map(&:to_i).reduce { |a, b| a * b }
+
+mapper.compose_image
